@@ -15,7 +15,7 @@ const STEPS = [
     id: "replay",
     label: "Replay",
     title: "Same bytes, your branch",
-    body: "One command loads the capture into a sandbox with real Postgres and Redis attached, then runs it against the code you are about to ship. No production traffic is touched and no customer is charged twice.",
+    body: "The capture keeps the exact bytes and the span tree together, so a sandbox run can reuse the same idempotency key and payload. In this deployment the result is derived from the record rather than executed — the capture is real, the execution is not.",
     Visual: ReplayVisual,
   },
   {

@@ -1,3 +1,4 @@
+import { DemoNotice } from "@/components/demo-notice";
 import { MotionProvider } from "@/components/motion-provider";
 import { Bento } from "@/features/landing/bento";
 import { Closing, Footer } from "@/features/landing/closing";
@@ -17,6 +18,7 @@ export default function Home() {
         Skip to content
       </a>
       <Nav />
+      <DemoNotice />
       <main id="main">
         <Hero />
         <Ticker />

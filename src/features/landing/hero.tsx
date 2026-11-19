@@ -2,7 +2,7 @@ import Link from "next/link";
 import { TraceDemo } from "./trace-demo";
 
 const FACTS = [
-  { value: "1,310ms → 214ms", label: "fix verified on the real request" },
+  { value: "1,310ms → 214ms", label: "captured wall → simulated replay" },
   { value: "0", label: "production calls re-sent by a replay" },
   { value: "1 line", label: "to start capturing every span" },
 ];

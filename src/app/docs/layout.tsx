@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DemoNotice } from "@/components/demo-notice";
 import { Footer } from "@/features/landing/closing";
 import { Nav } from "@/features/landing/nav";
 import { DOCS } from "@/lib/docs";
@@ -16,6 +17,7 @@ export default function DocsLayout({
   return (
     <>
       <Nav />
+      <DemoNotice />
       <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-8">
         <div className="lg:grid lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-16">
           <aside className="border-b border-rule py-8 lg:sticky lg:top-14 lg:max-h-[calc(100dvh-3.5rem)] lg:self-start lg:overflow-y-auto lg:border-b-0 lg:py-14">
