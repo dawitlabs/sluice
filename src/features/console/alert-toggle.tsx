@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useToast } from "@/components/toast";
 import { type ActionResult, toggleAlertAction } from "@/lib/actions";
 
 const INITIAL: ActionResult = { status: "idle" };
@@ -18,6 +19,14 @@ export function AlertToggle({
     toggleAlertAction,
     INITIAL,
   );
+  const { push } = useToast();
+
+  useEffect(() => {
+    if (state.status === "ok")
+      push(`${name} ${enabled ? "paused" : "enabled"}`);
+    if (state.status === "error")
+      push(state.message ?? "toggle failed", "error");
+  }, [state, push, name, enabled]);
 
   return (
     <div className="flex items-center gap-3">

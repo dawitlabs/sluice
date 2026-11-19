@@ -13,6 +13,7 @@ import {
 } from "@/db/schema";
 import { ensureProject } from "@/lib/data";
 import { requireUser } from "@/lib/session";
+import { generateTraffic } from "@/lib/traffic";
 
 export type ActionResult = {
   status: "idle" | "ok" | "error";
@@ -44,6 +45,25 @@ const SETTINGS = z.object({
 async function currentProject() {
   const user = await requireUser();
   return ensureProject(user.id);
+}
+
+export async function sendTrafficAction(
+  _previous: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const parsed = z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(5)
+    .safeParse(formData.get("count"));
+  const count = parsed.success ? parsed.data : 3;
+  const project = await currentProject();
+
+  const created = await generateTraffic(project.id, count);
+
+  revalidatePath("/console");
+  return { status: "ok", message: `${created} captures arrived` };
 }
 
 export async function replayCaptureAction(

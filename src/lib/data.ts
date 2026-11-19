@@ -1,5 +1,6 @@
 import "server-only";
-import { and, asc, desc, eq, gte, ilike, or } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, or, sql } from "drizzle-orm";
+import { cache } from "react";
 import { db } from "@/db";
 import {
   alertRules,
@@ -9,6 +10,7 @@ import {
   replays,
   spans,
 } from "@/db/schema";
+import { generateTraffic } from "@/lib/traffic";
 
 export const SLOW_THRESHOLD_MS = 400;
 
@@ -104,22 +106,30 @@ function toSummary(row: {
   };
 }
 
-export async function ensureProject(ownerId: string): Promise<ProjectRow> {
-  const existing = await db
-    .select()
-    .from(projects)
-    .where(eq(projects.ownerId, ownerId))
-    .limit(1);
+export const ensureProject = cache(
+  async (ownerId: string): Promise<ProjectRow> => {
+    const existing = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.ownerId, ownerId))
+      .limit(1);
 
-  const project =
-    existing[0] ??
-    (
-      await db
-        .insert(projects)
-        .values({ ownerId, slug: "acme-api", name: "acme-api" })
-        .returning()
-    )[0];
+    if (existing[0]) {
+      const found = existing[0];
+      return projectRow(found);
+    }
 
+    const [created] = await db
+      .insert(projects)
+      .values({ ownerId, slug: "acme-api", name: "acme-api" })
+      .returning();
+
+    await generateTraffic(created.id, 6);
+    return projectRow(created);
+  },
+);
+
+function projectRow(project: typeof projects.$inferSelect): ProjectRow {
   return {
     id: project.id,
     name: project.name,
@@ -185,15 +195,25 @@ export async function listCaptures(
   return rows.map(toSummary);
 }
 
-export async function countCaptures(
+export type WindowStats = {
+  total: number;
+  errors: number;
+  slow: number;
+  replayed: number;
+  p95Ms: number;
+};
+
+export async function windowStats(
   projectId: string,
   window: WindowKey,
-): Promise<Record<CaptureFilter, number>> {
-  const rows = await db
+): Promise<WindowStats> {
+  const [row] = await db
     .select({
-      status: captures.status,
-      durationMs: captures.durationMs,
-      replayed: captures.replayed,
+      total: sql<number>`count(*)::int`,
+      errors: sql<number>`count(*) filter (where ${captures.status} >= 500)::int`,
+      slow: sql<number>`count(*) filter (where ${captures.durationMs} >= ${SLOW_THRESHOLD_MS})::int`,
+      replayed: sql<number>`count(*) filter (where ${captures.replayed})::int`,
+      p95Ms: sql<number>`coalesce(percentile_cont(0.95) within group (order by ${captures.durationMs}), 0)::int`,
     })
     .from(captures)
     .where(
@@ -204,44 +224,11 @@ export async function countCaptures(
     );
 
   return {
-    all: rows.length,
-    errors: rows.filter((row) => row.status >= 500).length,
-    slow: rows.filter((row) => row.durationMs >= SLOW_THRESHOLD_MS).length,
-    replayed: rows.filter((row) => row.replayed).length,
-  };
-}
-
-export async function summarizeCaptures(
-  projectId: string,
-  window: WindowKey,
-): Promise<CaptureSummaryStats> {
-  const rows = await db
-    .select({
-      durationMs: captures.durationMs,
-      status: captures.status,
-      replayed: captures.replayed,
-    })
-    .from(captures)
-    .where(
-      and(
-        eq(captures.projectId, projectId),
-        gte(captures.at, windowStart(window)),
-      ),
-    );
-
-  const durations = rows
-    .map((row) => row.durationMs)
-    .sort((left, right) => left - right);
-  const p95Index = Math.min(
-    durations.length - 1,
-    Math.floor(durations.length * 0.95),
-  );
-
-  return {
-    total: rows.length,
-    errors: rows.filter((row) => row.status >= 500).length,
-    p95Ms: durations[Math.max(p95Index, 0)] ?? 0,
-    replays: rows.filter((row) => row.replayed).length,
+    total: row?.total ?? 0,
+    errors: row?.errors ?? 0,
+    slow: row?.slow ?? 0,
+    replayed: row?.replayed ?? 0,
+    p95Ms: row?.p95Ms ?? 0,
   };
 }
 

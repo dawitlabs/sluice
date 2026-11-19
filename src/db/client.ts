@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
 
-const IDLE_TIMEOUT_MS = 5_000;
+const IDLE_TIMEOUT_MS = 30_000;
 const CONNECTION_TIMEOUT_MS = 10_000;
 
 const connectionString = process.env.DATABASE_URL;

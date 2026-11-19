@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useToast } from "@/components/toast";
 import {
   type ActionResult,
   addRedactionAction,
@@ -41,6 +42,13 @@ export function RedactionManager({ rules }: { rules: RedactionRow[] }) {
     addRedactionAction,
     INITIAL,
   );
+  const { push } = useToast();
+
+  useEffect(() => {
+    if (state.status === "ok") push(state.message ?? "rule added");
+    if (state.status === "error")
+      push(state.message ?? "rule rejected", "error");
+  }, [state, push]);
 
   return (
     <div>

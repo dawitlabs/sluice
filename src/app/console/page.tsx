@@ -5,13 +5,14 @@ import { Kbd } from "@/components/kbd";
 import { CaptureTable } from "@/features/console/capture-table";
 import { FilterBar } from "@/features/console/filter-bar";
 import { ListKeys } from "@/features/console/list-keys";
+import { StatValue } from "@/features/console/stat-value";
+import { TrafficButton } from "@/features/console/traffic-button";
 import {
   type CaptureFilter,
-  countCaptures,
   ensureProject,
   listCaptures,
-  summarizeCaptures,
   type WindowKey,
+  windowStats,
 } from "@/lib/data";
 import { formatDuration } from "@/lib/format";
 import { requireUser } from "@/lib/session";
@@ -69,32 +70,54 @@ async function Captures({ searchParams }: { searchParams: SearchParams }) {
   const user = await requireUser();
   const project = await ensureProject(user.id);
 
-  const [captures, counts, stats] = await Promise.all([
+  const [captures, stats] = await Promise.all([
     listCaptures(project.id, { filter, query, window: windowKey }),
-    countCaptures(project.id, windowKey),
-    summarizeCaptures(project.id, windowKey),
+    windowStats(project.id, windowKey),
   ]);
 
-  const tiles = [
-    { label: `captures · ${windowKey}`, value: String(stats.total) },
-    { label: "5xx", value: String(stats.errors), tone: "text-signal" },
-    { label: "p95", value: formatDuration(stats.p95Ms) },
-    { label: "replayed", value: String(stats.replays) },
+  const counts: Record<CaptureFilter, number> = {
+    all: stats.total,
+    errors: stats.errors,
+    slow: stats.slow,
+    replayed: stats.replayed,
+  };
+
+  const tiles: Array<{
+    label: string;
+    value: number | null;
+    text?: string;
+    tone?: string;
+  }> = [
+    { label: `captures · ${windowKey}`, value: stats.total },
+    { label: "5xx", value: stats.errors, tone: "text-signal" },
+    { label: "p95", value: null, text: formatDuration(stats.p95Ms) },
+    { label: "replayed", value: stats.replayed },
   ];
 
   return (
     <div className="space-y-0">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="font-mono text-[10px] tracking-[0.1em] text-ink-faint uppercase">
+          live capture stream
+        </p>
+        <TrafficButton />
+      </div>
+
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-rule bg-rule sm:grid-cols-4">
         {tiles.map((tile) => (
           <div key={tile.label} className="bg-paper px-4 py-3">
             <p className="font-mono text-[9px] tracking-[0.1em] text-ink-faint uppercase">
               {tile.label}
             </p>
-            <p
-              className={`mt-1 font-mono text-lg text-ink tabular-nums ${tile.tone ?? ""}`}
-            >
-              {tile.value}
-            </p>
+            {tile.value === null ? (
+              <p
+                className={`mt-1 font-mono text-lg text-ink tabular-nums ${tile.tone ?? ""}`}
+              >
+                {tile.text}
+              </p>
+            ) : (
+              <StatValue value={tile.value} tone={tile.tone} />
+            )}
           </div>
         ))}
       </div>

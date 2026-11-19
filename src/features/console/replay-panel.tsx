@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useToast } from "@/components/toast";
 import { type ReplayResult, replayCaptureAction } from "@/lib/actions";
 import type { LatestReplay } from "@/lib/data";
 import { formatDuration } from "@/lib/format";
@@ -22,6 +23,16 @@ export function ReplayPanel({
     replayCaptureAction,
     INITIAL,
   );
+  const { push } = useToast();
+
+  useEffect(() => {
+    if (state.status === "ok" && state.durationMs !== undefined) {
+      push(`replay passed in ${formatDuration(state.durationMs)}`);
+    }
+    if (state.status === "error") {
+      push(state.message ?? "replay failed", "error");
+    }
+  }, [state, push]);
 
   return (
     <div className="rounded-xl border border-rule bg-paper p-4">
