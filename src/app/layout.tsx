@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { ErrorReporter } from "@/components/error-reporter";
 import { ToastProvider } from "@/components/toast";
 import "./globals.css";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
     >
       <body className="bg-paper text-ink antialiased">
         <ToastProvider>{children}</ToastProvider>
+        <ErrorReporter />
       </body>
     </html>
   );

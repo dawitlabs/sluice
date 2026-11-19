@@ -12,7 +12,7 @@ const SECTIONS = [
   {
     heading: "What we store",
     body: [
-      "When you sign in with Google or GitHub, we receive your name, email address and provider account id. If you sign up with a password instead, we store your email and a scrypt hash — never the password itself.",
+      "Sign-in is limited to Google and GitHub. When you authorise either provider we receive your name, email address and provider account id. Sluice never receives or stores a password.",
       "When your application sends a captured request, we store the method, path, status, duration, region, release, the request and response bodies, and the span tree. Redaction rules run before the write, so configured fields are never persisted.",
     ],
   },

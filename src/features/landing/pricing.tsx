@@ -24,7 +24,7 @@ export const PLANS: Plan[] = [
       "1 seat",
     ],
     cta: "Start free",
-    href: "/sign-up",
+    href: "/login",
     featured: false,
   },
   {
@@ -40,7 +40,7 @@ export const PLANS: Plan[] = [
       "CI replay on pull requests",
     ],
     cta: "Start 14-day trial",
-    href: "/sign-up",
+    href: "/login",
     featured: true,
   },
   {

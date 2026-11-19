@@ -11,7 +11,7 @@ import {
   redactionRules,
   replays,
 } from "@/db/schema";
-import { ensureProject } from "@/lib/data";
+import { ensureProject, recentCaptureCount } from "@/lib/data";
 import { requireUser } from "@/lib/session";
 import { generateTraffic } from "@/lib/traffic";
 
@@ -59,6 +59,14 @@ export async function sendTrafficAction(
     .safeParse(formData.get("count"));
   const count = parsed.success ? parsed.data : 3;
   const project = await currentProject();
+  const recent = await recentCaptureCount(project.id, 60);
+
+  if (recent > 60) {
+    return {
+      status: "error",
+      message: "ingest rate limited, retry in a minute",
+    };
+  }
 
   const created = await generateTraffic(project.id, count);
 

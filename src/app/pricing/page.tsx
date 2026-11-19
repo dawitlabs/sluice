@@ -254,7 +254,7 @@ export default function PricingPage() {
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <Link
-                href="/sign-up"
+                href="/login"
                 className="inline-flex h-11 items-center rounded-full bg-ink px-6 text-sm font-medium text-paper transition-colors hover:bg-signal-deep"
               >
                 Start free

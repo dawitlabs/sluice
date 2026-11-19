@@ -1,30 +1,21 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AuthShell } from "@/features/auth/auth-shell";
-import { LoginForm } from "@/features/auth/login-form";
 import { SocialButtons } from "@/features/auth/social-buttons";
 import { configuredProviders } from "@/lib/providers";
+import { safeNext } from "@/lib/redirect";
 
 export const metadata: Metadata = {
   title: "Sign in — Sluice",
-  description: "Sign in to the Sluice capture console.",
+  description: "Sign in to the Sluice capture console with Google or GitHub.",
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
-function safeNext(value: string | string[] | undefined): string {
-  const candidate = Array.isArray(value) ? value[0] : value;
-  if (candidate?.startsWith("/") && !candidate.startsWith("//")) {
-    return candidate;
-  }
-  return "/console";
-}
-
 function LoginFallback() {
   return (
-    <div className="mt-8 space-y-4" aria-hidden="true">
-      <div className="h-16 animate-pulse rounded-lg bg-paper-3" />
-      <div className="h-16 animate-pulse rounded-lg bg-paper-3" />
+    <div className="mt-8 space-y-2.5" aria-hidden="true">
+      <div className="h-11 animate-pulse rounded-full bg-paper-3" />
       <div className="h-11 animate-pulse rounded-full bg-paper-3" />
     </div>
   );
@@ -32,14 +23,18 @@ function LoginFallback() {
 
 async function LoginSection({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
-  const next = safeNext(params.next);
+  const providers = configuredProviders();
 
-  return (
-    <>
-      <SocialButtons providers={configuredProviders()} next={next} />
-      <LoginForm next={next} />
-    </>
-  );
+  if (providers.length === 0) {
+    return (
+      <p className="mt-8 rounded-lg border border-rule bg-paper-2 px-4 py-3 text-[13px] leading-relaxed text-ink-soft">
+        No identity provider is configured on this deployment. Set the Google or
+        GitHub client credentials to enable sign-in.
+      </p>
+    );
+  }
+
+  return <SocialButtons providers={providers} next={safeNext(params.next)} />;
 }
 
 export default function LoginPage({

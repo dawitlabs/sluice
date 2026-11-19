@@ -231,6 +231,23 @@ export type WindowStats = {
   p95Ms: number;
 };
 
+export async function recentCaptureCount(
+  projectId: string,
+  seconds: number,
+): Promise<number> {
+  const [row] = await db
+    .select({ total: sql<number>`count(*)::int` })
+    .from(captures)
+    .where(
+      and(
+        eq(captures.projectId, projectId),
+        gte(captures.createdAt, new Date(Date.now() - seconds * 1000)),
+      ),
+    );
+
+  return row?.total ?? 0;
+}
+
 export async function windowStats(
   projectId: string,
   window: WindowKey,

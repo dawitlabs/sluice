@@ -18,8 +18,8 @@ const SECTIONS = [
   {
     heading: "Accounts",
     body: [
-      "You may sign in with Google, GitHub or an email address and password. You are responsible for activity under your account and for keeping your credentials and OAuth sessions secure.",
-      "One project is provisioned per account. Accounts that sign in with a provider and later add a password, or the reverse, are linked by verified email address rather than duplicated.",
+      "Sign-in is available only through Google or GitHub. You are responsible for activity under your account and for keeping the provider session on your device secure.",
+      "One project is provisioned per account. If you sign in with a second provider using the same verified email address, the accounts are linked rather than duplicated.",
     ],
   },
   {

@@ -41,11 +41,7 @@ export const auth = betterAuth({
     "https://sluice-*.vercel.app",
     ...TRUSTED_ORIGINS,
   ],
-  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: false,
-    revokeSessionsOnPasswordReset: true,
-  },
+  emailAndPassword: { enabled: false },
   socialProviders: { ...googleProvider, ...githubProvider },
   account: {
     accountLinking: {
@@ -68,8 +64,7 @@ export const auth = betterAuth({
     enabled: true,
     storage: "database",
     customRules: {
-      "/sign-up/email": { window: 60, max: 5 },
-      "/sign-in/email": { window: 60, max: 10 },
+      "/sign-in/social": { window: 60, max: 20 },
     },
   },
   plugins: [nextCookies()],

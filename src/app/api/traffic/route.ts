@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { ensureProject } from "@/lib/data";
+import { ensureProject, recentCaptureCount } from "@/lib/data";
 import { getSessionUser } from "@/lib/session";
 import { generateTraffic } from "@/lib/traffic";
 
@@ -23,6 +23,15 @@ export async function POST(request: Request) {
   }
 
   const project = await ensureProject(user.id);
+  const recent = await recentCaptureCount(project.id, 60);
+
+  if (recent > 60) {
+    return NextResponse.json(
+      { error: "ingest rate limited, retry in a minute" },
+      { status: 429 },
+    );
+  }
+
   const created = await generateTraffic(project.id, parsed.data.count);
 
   revalidatePath("/console");

@@ -40,10 +40,10 @@ export function ReplayPanel({
         replay sandbox
       </h2>
       <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">
-        Runs the captured bytes against{" "}
-        <span className="font-mono text-[12px] text-ink">postgres:16</span> and{" "}
-        <span className="font-mono text-[12px] text-ink">stripe:mock</span>.
-        Production is never called and no row is committed.
+        In this deployment the result below is{" "}
+        <span className="font-mono text-[12px] text-ink">derived</span> from the
+        capture rather than executed: no container runs your code. Production is
+        never called and no row is committed.
       </p>
 
       <form action={formAction} className="mt-4">
@@ -73,7 +73,7 @@ export function ReplayPanel({
       {latestReplay ? (
         <div className="mt-4 overflow-hidden rounded-lg border border-rule">
           <div className="flex items-center justify-between border-b border-rule bg-paper-2 px-3 py-2 font-mono text-[10px] text-ink-faint uppercase">
-            <span>sandbox result</span>
+            <span>sandbox result · simulated</span>
             <span
               className={latestReplay.status < 400 ? "text-ok" : "text-signal"}
             >
