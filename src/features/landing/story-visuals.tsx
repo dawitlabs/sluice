@@ -27,9 +27,7 @@ export function CaptureVisual() {
             >
               <span
                 className={
-                  line.tone === "error"
-                    ? "text-signal"
-                    : "text-ink-soft"
+                  line.tone === "error" ? "text-signal" : "text-ink-soft"
                 }
               >
                 <span className="text-ink-faint">{line.glyph} </span>

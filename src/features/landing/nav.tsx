@@ -2,15 +2,15 @@ import Link from "next/link";
 
 const LINKS = [
   { href: "/console", label: "Console" },
-  { href: "#how", label: "How it works" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#docs", label: "Docs" },
+  { href: "/docs/quickstart", label: "Docs" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/changelog", label: "Changelog" },
 ];
 
 export function Nav() {
   return (
     <header className="sticky top-0 z-40 border-b border-rule bg-paper">
-      <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center justify-between px-5 sm:px-8">
+      <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center justify-between gap-4 px-5 sm:px-8">
         <Link
           href="/"
           className="display flex items-baseline gap-2 text-[22px] text-ink"
@@ -33,18 +33,26 @@ export function Nav() {
           ))}
         </nav>
 
-        <Link
-          href="/console"
-          className="group inline-flex h-9 items-center gap-2 rounded-full bg-ink px-4 text-[13px] font-medium text-paper transition-colors hover:bg-signal-deep"
-        >
-          Open console
-          <span
-            aria-hidden="true"
-            className="font-mono text-[10px] text-paper/60 transition-transform group-hover:translate-x-0.5"
+        <div className="flex items-center gap-4">
+          <Link
+            href="/login"
+            className="font-mono text-[11px] tracking-[0.1em] text-ink-soft uppercase transition-colors hover:text-ink"
           >
-            →
-          </span>
-        </Link>
+            Sign in
+          </Link>
+          <Link
+            href="/console"
+            className="group inline-flex h-9 items-center gap-2 rounded-full bg-ink px-4 text-[13px] font-medium text-paper transition-colors hover:bg-signal-deep"
+          >
+            Open console
+            <span
+              aria-hidden="true"
+              className="font-mono text-[10px] text-paper/60 transition-transform group-hover:translate-x-0.5"
+            >
+              →
+            </span>
+          </Link>
+        </div>
       </div>
     </header>
   );

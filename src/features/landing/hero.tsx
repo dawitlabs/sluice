@@ -15,7 +15,10 @@ export function Hero() {
       <div className="relative mx-auto grid w-full max-w-[1200px] gap-12 px-5 pt-14 pb-16 sm:px-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:gap-14 lg:pt-24 lg:pb-20">
         <div data-reveal className="reveal">
           <p className="flex items-center gap-2 font-mono text-[11px] tracking-[0.12em] text-ink-soft uppercase">
-            <span className="size-1.5 rounded-full bg-signal" aria-hidden="true" />
+            <span
+              className="size-1.5 rounded-full bg-signal"
+              aria-hidden="true"
+            />
             Request-level observability
           </p>
 
@@ -28,9 +31,9 @@ export function Hero() {
           </h1>
 
           <p className="mt-6 max-w-[38ch] text-[15px] leading-relaxed text-ink-soft sm:text-base">
-            Sluice captures the exact request that failed in production — headers,
-            body, and every span underneath — then replays it against your branch
-            in one command.
+            Sluice captures the exact request that failed in production —
+            headers, body, and every span underneath — then replays it against
+            your branch in one command.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -56,7 +59,11 @@ export function Hero() {
           </p>
         </div>
 
-        <div data-reveal className="reveal" style={{ transitionDelay: "120ms" }}>
+        <div
+          data-reveal
+          className="reveal"
+          style={{ transitionDelay: "120ms" }}
+        >
           <TraceDemo />
           <p className="mt-3 text-center font-mono text-[10px] tracking-[0.06em] text-ink-faint">
             live demo — hit replay
@@ -67,7 +74,10 @@ export function Hero() {
       <div className="relative border-t border-rule">
         <dl className="mx-auto grid w-full max-w-[1200px] grid-cols-1 divide-y divide-rule px-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:px-8">
           {FACTS.map((fact) => (
-            <div key={fact.label} className="py-5 sm:px-6 sm:first:pl-0 sm:last:pr-0">
+            <div
+              key={fact.label}
+              className="py-5 sm:px-6 sm:first:pl-0 sm:last:pr-0"
+            >
               <dt className="font-mono text-[10px] tracking-[0.1em] text-ink-faint uppercase">
                 {fact.label}
               </dt>

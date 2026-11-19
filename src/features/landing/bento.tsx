@@ -32,11 +32,15 @@ const SPAN_ROWS = [
 ];
 
 const DOT_COUNT = 60;
+const DOT_KEYS = Array.from(
+  { length: DOT_COUNT },
+  (_, index) => `dot-${index}`,
+);
 
 function FailureGrid() {
   return (
     <div className="grid grid-cols-12 gap-1.5" aria-hidden="true">
-      {Array.from({ length: DOT_COUNT }, (_, index) => {
+      {DOT_KEYS.map((key, index) => {
         const isError = (index * 7) % 17 === 3 || index === 47;
         const isSlow = !isError && (index * 5) % 11 === 2;
         const tone = isError
@@ -44,7 +48,7 @@ function FailureGrid() {
           : isSlow
             ? "bg-warn"
             : "bg-rule-strong";
-        return <span key={index} className={`h-3 rounded-[2px] ${tone}`} />;
+        return <span key={key} className={`h-3 rounded-[2px] ${tone}`} />;
       })}
     </div>
   );
@@ -98,8 +102,7 @@ export function Bento() {
             body="The console is optional. Captures are addressable by id, so CI can turn a p1 into a regression test before standup."
           >
             <div className="rounded-lg border border-rule bg-paper-2 px-4 py-3 font-mono text-[11px] text-ink-soft">
-              <span className="text-signal">$</span> sluice replay
-              req_9f4c1a
+              <span className="text-signal">$</span> sluice replay req_9f4c1a
               <br />
               <span className="text-ink-faint">
                 {"  ✓ 6 spans replayed · 200 OK · −84%"}

@@ -19,8 +19,8 @@ export default function ConsoleError({
           The console lost the stream.
         </h1>
         <p className="mt-3 text-[13.5px] leading-relaxed text-ink-soft">
-          Retrying reconnects to the capture store. Your filters and open capture
-          are restored with it.
+          Retrying reconnects to the capture store. Your filters and open
+          capture are restored with it.
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
           <button
@@ -38,7 +38,9 @@ export default function ConsoleError({
           </Link>
         </div>
         <p className="mt-5 border-t border-rule pt-3 font-mono text-[10px] text-ink-faint">
-          {error instanceof Error ? "error logged · ref suppressed" : "unexpected state"}
+          {error instanceof Error
+            ? "error logged · ref suppressed"
+            : "unexpected state"}
         </p>
       </div>
     </div>

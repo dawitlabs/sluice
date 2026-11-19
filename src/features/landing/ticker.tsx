@@ -2,7 +2,12 @@ const FEED = [
   { method: "POST", path: "/v1/checkout/confirm", status: 504, ms: "1.31s" },
   { method: "GET", path: "/v1/catalog/search", status: 200, ms: "84ms" },
   { method: "POST", path: "/v1/webhooks/stripe", status: 200, ms: "311ms" },
-  { method: "GET", path: "/v1/subscriptions/sub_4191", status: 500, ms: "412ms" },
+  {
+    method: "GET",
+    path: "/v1/subscriptions/sub_4191",
+    status: 500,
+    ms: "412ms",
+  },
   { method: "POST", path: "/v1/events/ingest", status: 202, ms: "12ms" },
   { method: "GET", path: "/v1/reports/usage", status: 200, ms: "2.28s" },
   { method: "PATCH", path: "/v1/users/usr_2201", status: 200, ms: "96ms" },
@@ -40,11 +45,7 @@ export function Ticker() {
     >
       <div className="ticker-track flex w-max gap-6">
         {[0, 1].map((copy) => (
-          <div
-            key={copy}
-            aria-hidden={copy === 1}
-            className="flex gap-6 pl-6"
-          >
+          <div key={copy} aria-hidden={copy === 1} className="flex gap-6 pl-6">
             {FEED.map((item) => (
               <Row key={`${copy}-${item.path}-${item.status}`} item={item} />
             ))}

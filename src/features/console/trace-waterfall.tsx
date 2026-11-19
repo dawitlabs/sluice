@@ -1,12 +1,13 @@
-import { formatDuration, type Span } from "@/lib/requests";
+import type { SpanRow, SpanStatus } from "@/lib/data";
+import { formatDuration } from "@/lib/format";
 
-const BAR_TONE: Record<Span["status"], string> = {
+const BAR_TONE: Record<SpanStatus, string> = {
   ok: "bg-ink/55",
   slow: "bg-warn",
   error: "bg-signal",
 };
 
-const TEXT_TONE: Record<Span["status"], string> = {
+const TEXT_TONE: Record<SpanStatus, string> = {
   ok: "text-ink-soft",
   slow: "text-warn",
   error: "text-signal",
@@ -16,7 +17,7 @@ export function TraceWaterfall({
   spans,
   totalMs,
 }: {
-  spans: Span[];
+  spans: SpanRow[];
   totalMs: number;
 }) {
   const scale = Math.max(totalMs, 1);

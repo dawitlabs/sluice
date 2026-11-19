@@ -3,31 +3,126 @@
 import { Play } from "lucide-react";
 import { useState } from "react";
 import { StatusPill } from "@/components/status-pill";
-import { formatDuration, type Span } from "@/lib/requests";
+import { formatDuration } from "@/lib/format";
+
+type DemoStatus = "ok" | "slow" | "error";
+
+type DemoSpan = {
+  id: string;
+  name: string;
+  service: string;
+  startMs: number;
+  durationMs: number;
+  status: DemoStatus;
+};
 
 type DemoMode = "original" | "replayed";
 
-const ORIGINAL_SPANS: Span[] = [
-  { id: "o1", name: "edge.handler", service: "vercel", startMs: 0, durationMs: 1310, status: "ok" },
-  { id: "o2", name: "auth.session", service: "app", startMs: 4, durationMs: 11, status: "ok" },
-  { id: "o3", name: "cart.revalidate", service: "app", startMs: 16, durationMs: 38, status: "ok" },
-  { id: "o4", name: "db.select orders", service: "postgres", startMs: 55, durationMs: 24, status: "ok" },
-  { id: "o5", name: "stripe.charge", service: "stripe", startMs: 96, durationMs: 1147, status: "error" },
-  { id: "o6", name: "response.serialize", service: "app", startMs: 1258, durationMs: 52, status: "ok" },
+const ORIGINAL_SPANS: DemoSpan[] = [
+  {
+    id: "o1",
+    name: "edge.handler",
+    service: "vercel",
+    startMs: 0,
+    durationMs: 1310,
+    status: "ok",
+  },
+  {
+    id: "o2",
+    name: "auth.session",
+    service: "app",
+    startMs: 4,
+    durationMs: 11,
+    status: "ok",
+  },
+  {
+    id: "o3",
+    name: "cart.revalidate",
+    service: "app",
+    startMs: 16,
+    durationMs: 38,
+    status: "ok",
+  },
+  {
+    id: "o4",
+    name: "db.select orders",
+    service: "postgres",
+    startMs: 55,
+    durationMs: 24,
+    status: "ok",
+  },
+  {
+    id: "o5",
+    name: "stripe.charge",
+    service: "stripe",
+    startMs: 96,
+    durationMs: 1147,
+    status: "error",
+  },
+  {
+    id: "o6",
+    name: "response.serialize",
+    service: "app",
+    startMs: 1258,
+    durationMs: 52,
+    status: "ok",
+  },
 ];
 
-const REPLAYED_SPANS: Span[] = [
-  { id: "r1", name: "edge.handler", service: "vercel", startMs: 0, durationMs: 214, status: "ok" },
-  { id: "r2", name: "auth.session", service: "app", startMs: 3, durationMs: 10, status: "ok" },
-  { id: "r3", name: "cart.revalidate", service: "app", startMs: 15, durationMs: 34, status: "ok" },
-  { id: "r4", name: "db.select orders", service: "postgres", startMs: 51, durationMs: 21, status: "ok" },
-  { id: "r5", name: "stripe.charge", service: "stripe", startMs: 74, durationMs: 118, status: "ok" },
-  { id: "r6", name: "response.serialize", service: "app", startMs: 194, durationMs: 19, status: "ok" },
+const REPLAYED_SPANS: DemoSpan[] = [
+  {
+    id: "r1",
+    name: "edge.handler",
+    service: "vercel",
+    startMs: 0,
+    durationMs: 214,
+    status: "ok",
+  },
+  {
+    id: "r2",
+    name: "auth.session",
+    service: "app",
+    startMs: 3,
+    durationMs: 10,
+    status: "ok",
+  },
+  {
+    id: "r3",
+    name: "cart.revalidate",
+    service: "app",
+    startMs: 15,
+    durationMs: 34,
+    status: "ok",
+  },
+  {
+    id: "r4",
+    name: "db.select orders",
+    service: "postgres",
+    startMs: 51,
+    durationMs: 21,
+    status: "ok",
+  },
+  {
+    id: "r5",
+    name: "stripe.charge",
+    service: "stripe",
+    startMs: 74,
+    durationMs: 118,
+    status: "ok",
+  },
+  {
+    id: "r6",
+    name: "response.serialize",
+    service: "app",
+    startMs: 194,
+    durationMs: 19,
+    status: "ok",
+  },
 ];
 
 const MODES: Record<
   DemoMode,
-  { status: number; totalMs: number; spans: Span[]; release: string }
+  { status: number; totalMs: number; spans: DemoSpan[]; release: string }
 > = {
   original: {
     status: 504,
@@ -63,7 +158,10 @@ export function TraceDemo() {
     <div className="overflow-hidden rounded-2xl border border-rule bg-paper">
       <div className="flex items-center justify-between gap-3 border-b border-rule px-4 py-3">
         <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] text-ink-faint uppercase">
-          <span className="live-dot size-1.5 rounded-full bg-signal" aria-hidden="true" />
+          <span
+            className="live-dot size-1.5 rounded-full bg-signal"
+            aria-hidden="true"
+          />
           capture · live
         </div>
         <div className="flex items-center gap-3">
@@ -92,7 +190,10 @@ export function TraceDemo() {
         <div className="space-y-2.5">
           {active.spans.map((span, index) => {
             const left = (span.startMs / active.totalMs) * 100;
-            const width = Math.max((span.durationMs / active.totalMs) * 100, 1.2);
+            const width = Math.max(
+              (span.durationMs / active.totalMs) * 100,
+              1.2,
+            );
 
             return (
               <div
@@ -139,10 +240,9 @@ export function TraceDemo() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-rule px-4 py-3">
-        <div
-          role="group"
+        <fieldset
           aria-label="Replay state"
-          className="inline-flex rounded-full border border-rule p-0.5"
+          className="m-0 inline-flex min-w-0 rounded-full border border-rule p-0.5"
         >
           {(["original", "replayed"] as const).map((option) => (
             <button
@@ -159,7 +259,7 @@ export function TraceDemo() {
               {option}
             </button>
           ))}
-        </div>
+        </fieldset>
 
         <button
           type="button"
@@ -173,14 +273,20 @@ export function TraceDemo() {
 
       <div className="flex items-center justify-between border-t border-rule bg-paper-2 px-4 py-2 font-mono text-[10px]">
         <span className="text-ink-faint">
-          {mode === "replayed" ? "replayed · no production traffic" : "captured · 14:02:11"}
+          {mode === "replayed"
+            ? "replayed · no production traffic"
+            : "captured · 14:02:11"}
         </span>
         <span
           className={
-            mode === "replayed" ? "text-signal-deep" : "text-ink-faint tabular-nums"
+            mode === "replayed"
+              ? "text-signal-deep"
+              : "text-ink-faint tabular-nums"
           }
         >
-          {mode === "replayed" ? "−84% wall time · 504 → 200" : "span 5 of 6 is the failure"}
+          {mode === "replayed"
+            ? "−84% wall time · 504 → 200"
+            : "span 5 of 6 is the failure"}
         </span>
       </div>
     </div>
