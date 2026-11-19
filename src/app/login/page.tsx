@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AuthShell } from "@/features/auth/auth-shell";
 import { LoginForm } from "@/features/auth/login-form";
+import { SocialButtons } from "@/features/auth/social-buttons";
+import { configuredProviders } from "@/lib/providers";
 
 export const metadata: Metadata = {
   title: "Sign in — Sluice",
@@ -30,7 +32,14 @@ function LoginFallback() {
 
 async function LoginSection({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
-  return <LoginForm next={safeNext(params.next)} />;
+  const next = safeNext(params.next);
+
+  return (
+    <>
+      <SocialButtons providers={configuredProviders()} next={next} />
+      <LoginForm next={next} />
+    </>
+  );
 }
 
 export default function LoginPage({

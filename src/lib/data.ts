@@ -125,6 +125,34 @@ export const ensureProject = cache(
       .returning();
 
     await generateTraffic(created.id, 6);
+
+    await db.insert(alertRules).values([
+      {
+        projectId: created.id,
+        name: "checkout 5xx rate",
+        condition: "stripe.charge errors > 1% over 5m",
+        channel: "slack",
+        enabled: true,
+      },
+      {
+        projectId: created.id,
+        name: "p95 regression",
+        condition: "p95 of any route > 2s for 10m",
+        channel: "email",
+        enabled: true,
+      },
+    ]);
+
+    await db
+      .insert(redactionRules)
+      .values(
+        ["authorization", "cookie", "card.number"].map((pattern) => ({
+          projectId: created.id,
+          pattern,
+        })),
+      )
+      .onConflictDoNothing();
+
     return projectRow(created);
   },
 );
