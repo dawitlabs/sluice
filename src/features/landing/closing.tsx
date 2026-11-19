@@ -115,12 +115,18 @@ export function Footer() {
 
         <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-rule pt-6 font-mono text-[10px] text-ink-faint">
           <span>© 2026 Sluice Systems</span>
-          <span className="flex items-center gap-4">
+          <span className="flex flex-wrap items-center gap-4">
             <Link href="/status" className="hover:text-ink">
               Status
             </Link>
             <Link href="/changelog" className="hover:text-ink">
               Changelog
+            </Link>
+            <Link href="/privacy" className="hover:text-ink">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-ink">
+              Terms
             </Link>
             <span>built for the 3am page</span>
           </span>
